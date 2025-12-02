@@ -106,15 +106,12 @@ class DecisionTree:
                 clicks = Counter(sub_X[sub_y == 1, feature])
                 ratio = {}
                 for key, current_count in counts.items():
-                    if key in clicks:
-                        current_click = clicks[key]
-                    else:
-                        current_click = 0
-                    ratio[key] = current_count / current_click
-                sorted_categories = list(map(lambda x: x[1], sorted(ratio.items(), key=lambda x: x[1])))
-                categories_map = dict(zip(sorted_categories, list(range(len(sorted_categories)))))
+                    current_click = clicks.get(key, 0)
+                    ratio[key] = current_click / current_count
+                sorted_categories = [cat for cat, _ in sorted(ratio.items(), key=lambda x: x[1])]
+                categories_map = {cat: idx for idx, cat in enumerate(sorted_categories)}
 
-                feature_vector = np.array(list(map(lambda x: categories_map[x], sub_X[:, feature])))
+                feature_vector = np.array([categories_map[val] for val in sub_X[:, feature]])
             else:
                 raise ValueError
 
